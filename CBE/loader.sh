@@ -4,7 +4,9 @@
 CBE_CORE_INSTALL_PATH="/path/to/CBE"
 
 
-CBE_CORE_MODULES_PATH="$CBE_CORE_INSTALL_PATH"/modules
+CBE_CORE_GLOBAL_MODULES_PATH="$CBE_CORE_INSTALL_PATH"/modules
+CBE_CORE_SYSTEM_MODULES_PATH="$CBE_CORE_INSTALL_PATH"/core
+CBE_CORE_USER_MODULES_PATH="$HOME"/.cbe_modules
 
 CBE_CORE_BOOL_QUITEMODE=""
 CBE_CORE_BOOL_FLATFILE=""
@@ -26,24 +28,77 @@ function CBE.Loader.LoadModules()
 		CBE.Loader.LoadFlatFile
 	fi
 	
-	CBE.Loader.PrintMessageNewLine "# - Loading Modules - "
-	
 	CBE_CORE_TMP_LAST_DIR="$(pwd)"
+	
+	CBE.Loader.LoadSystemModules
+	
+	CBE.Loader.LoadGlobalModules
+	
+	CBE.Loader.LoadUserModules
 		
-	cd "$CBE_CORE_MODULES_PATH"
+	cd "$CBE_CORE_TMP_LAST_DIR"
+	
+	CBE.Loader.PrintMessageNewLine "# - Module Load Complete -"
+}
+
+function CBE.Loader.LoadSystemModules()
+{
+	CBE.Loader.PrintMessage "# - Loading System Modules... "
+	
+	cd "$CBE_CORE_SYSTEM_MODULES_PATH"
 	
 	for f in *.cbe; do 
 		if [ "$f" == "*.cbe" ]; then
-			CBE.Loader.PrintMessageNewLine "# ERROR: No modules found!"
+			CBE.Loader.PrintMessageNewLine "# ERROR: No system modules found!"
+			return 0
 		else
-			CBE.Loader.PrintMessageNewLine "# ** Processing module: ${f%.*}"
 			. "$f"
 		fi
 	done
 	
-	cd "$CBE_CORE_TMP_LAST_DIR"
+	CBE.Loader.PrintMessageNewLine "Ok!"
+}
+
+function CBE.Loader.LoadGlobalModules()
+{
+	CBE.Loader.PrintMessageNewLine "# - Loading Global Modules : "
+		
+	cd "$CBE_CORE_GLOBAL_MODULES_PATH"
 	
-	CBE.Loader.PrintMessageNewLine "# - Module Load Complete -"
+	for f in *.cbe; do 
+		if [ "$f" == "*.cbe" ]; then
+			CBE.Loader.PrintMessageNewLine "# WARN: No global modules found!"
+		else
+			CBE.Loader.PrintMessage "#   - Global Module: ${f%.*}"
+			. "$f"
+			CBE.Loader.PrintMessageNewLine " ... Ok!"
+		fi
+	done
+}
+
+function CBE.Loader.LoadUserModules()
+{
+	CBE.Loader.PrintMessageNewLine "# - Loading User Modules : "
+		
+	if [ -d "$CBE_CORE_USER_MODULES_PATH" ]; then
+		
+		cd "$CBE_CORE_USER_MODULES_PATH"
+	
+		for f in *.cbe; do 
+			if [ "$f" == "*.cbe" ]; then
+				CBE.Loader.PrintMessageNewLine "#   - WARN: No user modules found!"
+			else
+				CBE.Loader.PrintMessage "# **** User Module: ${f%.*}"
+				. "$f"
+				CBE.Loader.PrintMessageNewLine " ... Ok!"
+			fi
+		done
+	else
+	
+		CBE.Loader.PrintMessageNewLine "#   - WARN: No user module folder found. Skipping..."
+	
+	fi
+
 }
 
 function CBE.Loader.LoadFlatFile()
@@ -52,7 +107,10 @@ function CBE.Loader.LoadFlatFile()
 	
 	if [ -e ~/.cbe_dir ]; then
 		CBE_CORE_INSTALL_PATH=$(head -n 1 ~/.cbe_dir)
-		CBE_CORE_MODULES_PATH="$CBE_CORE_INSTALL_PATH"/modules ## Reset the modules dir with new install path from flatfile.
+		
+		CBE_CORE_GLOBAL_MODULES_PATH="$CBE_CORE_INSTALL_PATH"/modules ## Reset the modules dir with new install path from flatfile.
+		CBE_CORE_SYSTEM_MODULES_PATH="$CBE_CORE_INSTALL_PATH"/core
+		
 		CBE.Loader.PrintMessageNewLine "OK!"
 	else
 		CBE.Loader.PrintMessageNewLine "Fail!"
@@ -97,6 +155,9 @@ function CBE.Loader.CleanUp()
 	unset -f CBE.Loader.PrintMessage
 	unset -f CBE.Loader.LoadFlatFile
 	unset -f CBE.Loader.SetOptions
+	unset -f CBE.Loader.LoadSystemModules
+	unset -f CBE.Loader.LoadGlobalModules
+	unset -f CBE.Loader.LoadUserModules
 
 	unset CBE_CORE_TMP_LAST_DIR	
 	unset CBE_CORE_BOOL_QUITEMODE

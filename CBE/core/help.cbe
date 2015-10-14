@@ -4,7 +4,7 @@ function @help()
 {
     IFS='.' read -a args <<< "$1"
     
-    CBE_CORE_HELP_MAIN_MODULE_HELP_PATH="$CBE_CORE_MODULES_PATH"/"${args[0]}"/help/"${args[0]}"
+    CBE_CORE_HELP_MAIN_MODULE_HELP_PATH="$CBE_CORE_GLOBAL_MODULES_PATH"/"${args[0]}"/help/"${args[0]}"
     CBE_CORE_HELP_MAIN_MODULE_HELP_NAMESPACE=""
     
     for arg in "${args[@]}"
