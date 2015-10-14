@@ -6,12 +6,21 @@ CBE_MODULE_SYSTEM_PREFIX="sys"
 ##
 # Load sub commands for module.
 ##
-function System.Init()
+function System.InitSubs()
 {
 	. "$CBE_MODULE_SYSTEM_HOME"/system.modules.cbe
 }
 
-System.Init
+function System.CleanUp()
+{
+	unset -f System.InitSubs
+	
+	unset CBE_MODULE_SYSTEM_HOME
+}
 
-unset -f System.Init
-unset CBE_MODULE_SYSTEM_HOME
+System.InitSubs
+System.CleanUp
+
+unset -f System.CleanUp
+
+

@@ -36,7 +36,7 @@ function CBE.Loader.LoadModules()
 		if [ "$f" == "*.cbe" ]; then
 			CBE.Loader.PrintMessageNewLine "# ERROR: No modules found!"
 		else
-			CBE.Loader.PrintMessageNewLine "# -- Processing module: ${f%.*}"
+			CBE.Loader.PrintMessageNewLine "# ** Processing module: ${f%.*}"
 			. "$f"
 		fi
 	done
