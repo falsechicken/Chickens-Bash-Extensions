@@ -1,0 +1,17 @@
+#!/bin/bash
+
+CBE_MODULE_SYSTEM_HOME="$CBE_CORE_MODULES_PATH"/system
+CBE_MODULE_SYSTEM_PREFIX="sys"
+
+##
+# Load sub commands for module.
+##
+function System.Init()
+{
+	. "$CBE_MODULE_SYSTEM_HOME"/system.modules.cbe
+}
+
+System.Init
+
+unset -f System.Init
+unset CBE_MODULE_SYSTEM_HOME

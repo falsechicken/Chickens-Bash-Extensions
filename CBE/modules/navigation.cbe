@@ -1,0 +1,135 @@
+#!/bin/bash
+
+CBE_NAV_CMD=""
+CBE_NAV_OLDPATH=""
+
+CBE_NAV_BIT_SIDE_1=""
+CBE_NAV_BIT_SIDE_2=""
+CBE_NAV_BIT_CURRENT_SIDE=""
+
+##
+# Moves the working directory N number of folders up.
+##
+function @nav.up()
+{
+	CBE_NAV_OLDPATH="$(pwd)"
+	
+	for (( c=1; c<=$1; c++ ))
+	do
+		CBE_NAV_CMD="$CBE_NAV_CMD"../
+	done
+
+	cd "$CBE_NAV_CMD"
+	
+	CBE_NAV_CMD=""
+}
+
+##
+# Changes the working directory back to the last directory before the
+# up command was used.
+##
+function @nav.back()
+{
+	cd "$CBE_NAV_OLDPATH"
+}
+
+##
+# Allows the saving of two directories. One on each side of the "bit" that can
+# be "flipped" back and forth with the flip command.
+function @nav.bit()
+{
+	# Saving something to the bit.
+	if [ "$1" == "s" ]; then
+		# Saving side 1 of the bit.
+		if [ "$2" == "1" ]; then
+			CBE_NAV_BIT_SIDE_1="$(pwd)"
+			echo "Bit side 1 set to: ""$CBE_NAV_BIT_SIDE_1"
+		fi
+		# Saving side 2 of the bit.
+		if [ "$2" == "2" ]; then
+			CBE_NAV_BIT_SIDE_2="$(pwd)"
+			echo "Bit side 2 set to: ""$CBE_NAV_BIT_SIDE_2"
+		fi
+	fi
+	
+	# Listing the data on the bit.
+	if [ "$1" == "l" ]; then 
+		echo "Bit 1: ""$CBE_NAV_BIT_SIDE_1"
+		echo "Bit 2: ""$CBE_NAV_BIT_SIDE_2"
+	fi
+	
+	# Delete data from the bit.
+	if [ "$1" == "d" ]; then
+		if [ "$2" == "1" ]; then
+			echo "Bit side 1 cleared."
+			CBE_NAV_BIT_SIDE_1=""
+		fi
+		if [ "$2" == "2" ]; then
+			echo "Bit side 2 cleared."
+			CBE_NAV_BIT_SIDE_2=""
+		fi
+		if [ "$2" == "a" ]; then
+			echo "Bit cleared."
+			CBE_NAV_BIT_SIDE_1=""
+			CBE_NAV_BIT_SIDE_2=""
+		fi
+	fi
+}
+
+##
+# Copies a file from the specified location to the opposite side of the bit.
+##
+function @nav.bitcp()
+{
+	if [ "$CBE_NAV_BIT_CURRENT_SIDE" == 1 ]; then
+		cp -r "$1" "$CBE_NAV_BIT_SIDE_2"/
+		echo "Copied "$1" to Bit side 1: ""$CBE_NAV_BIT_SIDE_1"/
+	fi
+	if [ "$CBE_NAV_BIT_CURRENT_SIDE" == 2 ]; then
+		cp -r "$1" "$CBE_NAV_BIT_SIDE_1"/
+		echo "Copied "$1" to Bit side 2: ""$CBE_NAV_BIT_SIDE_2"/
+	fi
+	if [ -z "$CBE_NAV_BIT_CURRENT_SIDE" ]; then
+		echo "Bit not set!"
+	fi
+}
+
+##
+# Moves a file from the specified location to the opposite side of the bit.
+##
+function @nav.bitmv()
+{
+	if [ "$CBE_NAV_BIT_CURRENT_SIDE" == 1 ]; then
+		mv "$1" "$CBE_NAV_BIT_SIDE_2"/
+		echo "Moved "$1" to Bit side 2: ""$CBE_NAV_BIT_SIDE_2"/
+	fi
+	if [ "$CBE_NAV_BIT_CURRENT_SIDE" == 2 ]; then
+		mv "$1" "$CBE_NAV_BIT_SIDE_1"/
+		echo "Moved "$1" to Bit side 1: ""$CBE_NAV_BIT_SIDE_1"/
+	fi
+	if [ -z "$CBE_NAV_BIT_CURRENT_SIDE" ]; then
+		echo "Bit not set!"
+	fi
+}
+
+##
+# Flip the bit. Flip-flop between the two directories set with bit.
+##
+function @nav.flip()
+{
+	if [ "$CBE_NAV_BIT_CURRENT_SIDE" == "1" ]; then
+		CBE_NAV_BIT_CURRENT_SIDE="2"
+		cd "$CBE_NAV_BIT_SIDE_2"
+		return 0
+	fi
+	if [ "$CBE_NAV_BIT_CURRENT_SIDE" == "2" ]; then
+		CBE_NAV_BIT_CURRENT_SIDE="1"
+		cd "$CBE_NAV_BIT_SIDE_1"
+		return 0
+	fi
+	if [ "$CBE_NAV_BIT_CURRENT_SIDE" == "" ]; then
+		CBE_NAV_BIT_CURRENT_SIDE="1"
+		cd "$CBE_NAV_BIT_SIDE_1"
+		return 0
+	fi
+}
