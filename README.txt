@@ -11,8 +11,8 @@ OR
 Insert ". /path/to/cbe/loader.sh false true" and create the file ~/.cbe_dir and add the CBE install path to the first line.
 
 
-Loader usage: loader.sh <quite mode> <flatfile mode>
+Loader usage: loader.sh <quiet mode> <flatfile mode>
 
-Quite Mode: Disable startup loading messages.
+Quiet Mode: Disable startup loading messages.
 
 FlatFile Mode: Pull the CBE_CORE_INSTALL_PATH from ~/.cbe_dir instead of the hard coded script variable.
