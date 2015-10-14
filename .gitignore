@@ -1,2 +1,3 @@
 .goutputstream-*
-
+build_release.sh
+build_beta.sh
