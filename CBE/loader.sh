@@ -93,7 +93,7 @@ function CBE.Loader.LoadUserModules()
 			if [ "$f" == "*.cbe" ]; then
 				CBE.Loader.PrintMessageNewLine "#   - WARN: No user modules found."
 			else
-				CBE.Loader.PrintMessage "# **** User Module: ${f%.*}"
+				CBE.Loader.PrintMessage "#   - User Module: ${f%.*}"
 				. "$f"
 				CBE.Loader.PrintMessageNewLine " ... Ok!"
 			fi
