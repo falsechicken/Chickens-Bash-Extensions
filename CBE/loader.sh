@@ -11,6 +11,8 @@ CBE_CORE_USER_MODULES_PATH="$HOME"/.cbe_modules
 CBE_CORE_BOOL_QUITEMODE=""
 CBE_CORE_BOOL_FLATFILE=""
 
+CBE_CORE_VERSION="v0.0.1"
+
 function CBE.Loader.ShowIntro()
 {
 	CBE.Loader.PrintMessageNewLine "##"
@@ -39,11 +41,13 @@ function CBE.Loader.LoadModules()
 	cd "$CBE_CORE_TMP_LAST_DIR"
 	
 	CBE.Loader.PrintMessageNewLine "# - Module Load Complete -"
+	
+	CBE.Loader.PrintMessageNewLine "##"
 }
 
 function CBE.Loader.LoadSystemModules()
 {
-	CBE.Loader.PrintMessage "# - Loading System Modules... "
+	CBE.Loader.PrintMessage "# - Loading System Modules ... "
 	
 	cd "$CBE_CORE_SYSTEM_MODULES_PATH"
 	
@@ -56,7 +60,7 @@ function CBE.Loader.LoadSystemModules()
 		fi
 	done
 	
-	CBE.Loader.PrintMessageNewLine "Ok!"
+	CBE.Loader.PrintMessageNewLine " Ok!"
 }
 
 function CBE.Loader.LoadGlobalModules()
@@ -67,7 +71,7 @@ function CBE.Loader.LoadGlobalModules()
 	
 	for f in *.cbe; do 
 		if [ "$f" == "*.cbe" ]; then
-			CBE.Loader.PrintMessageNewLine "# WARN: No global modules found!"
+			CBE.Loader.PrintMessageNewLine "#   - WARN: No global modules found."
 		else
 			CBE.Loader.PrintMessage "#   - Global Module: ${f%.*}"
 			. "$f"
@@ -86,7 +90,7 @@ function CBE.Loader.LoadUserModules()
 	
 		for f in *.cbe; do 
 			if [ "$f" == "*.cbe" ]; then
-				CBE.Loader.PrintMessageNewLine "#   - WARN: No user modules found!"
+				CBE.Loader.PrintMessageNewLine "#   - WARN: No user modules found."
 			else
 				CBE.Loader.PrintMessage "# **** User Module: ${f%.*}"
 				. "$f"
@@ -103,7 +107,7 @@ function CBE.Loader.LoadUserModules()
 
 function CBE.Loader.LoadFlatFile()
 {
-	CBE.Loader.PrintMessage "# Loading flatfile..." 
+	CBE.Loader.PrintMessage "# - Loading flatfile ... " 
 	
 	if [ -e ~/.cbe_dir ]; then
 		CBE_CORE_INSTALL_PATH=$(head -n 1 ~/.cbe_dir)
@@ -111,16 +115,11 @@ function CBE.Loader.LoadFlatFile()
 		CBE_CORE_GLOBAL_MODULES_PATH="$CBE_CORE_INSTALL_PATH"/modules ## Reset the modules dir with new install path from flatfile.
 		CBE_CORE_SYSTEM_MODULES_PATH="$CBE_CORE_INSTALL_PATH"/core
 		
-		CBE.Loader.PrintMessageNewLine "OK!"
+		CBE.Loader.PrintMessageNewLine "Ok!"
 	else
 		CBE.Loader.PrintMessageNewLine "Fail!"
 		CBE.Loader.PrintMessageNewLine "# (WARN) Flat file mode enabled but no file exists! (~/.cbe_dir)"
 	fi
-}
-
-function CBE.Loader.ShowLoadingComplete()
-{
-	CBE.Loader.PrintMessageNewLine "##"
 }
 
 function CBE.Loader.PrintMessageNewLine()
@@ -150,7 +149,6 @@ function CBE.Loader.CleanUp()
 {
 	unset -f CBE.Loader.ShowIntro
 	unset -f CBE.Loader.LoadModules
-	unset -f CBE.Loader.ShowLoadingComplete
 	unset -f CBE.Loader.PrintMessageNewLine
 	unset -f CBE.Loader.PrintMessage
 	unset -f CBE.Loader.LoadFlatFile
@@ -169,7 +167,6 @@ function CBE.Loader.CleanUp()
 CBE.Loader.SetOptions "$1" "$2"
 CBE.Loader.ShowIntro
 CBE.Loader.LoadModules
-CBE.Loader.ShowLoadingComplete
 CBE.Loader.CleanUp
 
 ## END FUNCTION CALLS

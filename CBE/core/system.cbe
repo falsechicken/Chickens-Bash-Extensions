@@ -22,5 +22,3 @@ System.InitSubs
 System.CleanUp
 
 unset -f System.CleanUp
-
-
