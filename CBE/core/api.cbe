@@ -1,0 +1,31 @@
+#!/bin/bash
+
+CBE_API_FUNCTION_RESULT=""
+
+CBE_API_MODULE_UUID=""
+
+function CBE.API.Init()
+{
+	CBE.API.GenerateUUID
+	
+	CBE_API_MODULE_UUID="${CBE_API_FUNCTION_RESULT##*( )}"
+	
+	CBE_API_FUNCTION_RESULT=""
+}
+
+function CBE.API.GenerateUUID()
+{
+	CBE_API_FUNCTION_RESULT="$(od -vAn -N4 -tu4 < /dev/urandom)"
+	CBE_API_FUNCTION_RESULT="${CBE_API_FUNCTION_RESULT##*( )}"
+}
+
+function CBE.API.CleanUp()
+{
+	unset -f CBE.API.Init
+	
+	unset -f CBE.API.GenerateUUID
+	
+	unset -f CBE.API.CleanUp
+}
+
+CBE.API.Init

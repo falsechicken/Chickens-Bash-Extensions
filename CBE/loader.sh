@@ -3,15 +3,14 @@
 ## USER SET
 CBE_CORE_INSTALL_PATH="/path/to/CBE"
 
-
 CBE_CORE_GLOBAL_MODULES_PATH="$CBE_CORE_INSTALL_PATH"/modules
 CBE_CORE_SYSTEM_MODULES_PATH="$CBE_CORE_INSTALL_PATH"/core
 CBE_CORE_USER_MODULES_PATH="$HOME"/.cbe_modules
 
-CBE_CORE_BOOL_QUITEMODE=""
-CBE_CORE_BOOL_FLATFILE=""
+CBE_CORE_SETTING_BOOL_QUIETMODE=""
+CBE_CORE_SETTING_BOOL_FLATFILE=""
 
-CBE_CORE_VERSION="v0.0.1"
+CBE_CORE_VERSION="v0.0.2"
 
 function CBE.Loader.ShowIntro()
 {
@@ -23,11 +22,13 @@ function CBE.Loader.ShowIntro()
 	CBE.Loader.PrintMessageNewLine "#"
 }
 
+## MODULE LOADING FUNCTIONS
+
 ## Initialize Modules
 function CBE.Loader.LoadModules()
 {
 	## Check if we are using flatfile mode
-	if [ "$CBE_CORE_BOOL_FLATFILE" == "true" ]; then
+	if [ "$CBE_CORE_SETTING_BOOL_FLATFILE" == "true" ]; then
 		CBE.Loader.LoadFlatFile
 	fi
 	
@@ -44,6 +45,8 @@ function CBE.Loader.LoadModules()
 	CBE.Loader.PrintMessageNewLine "# - Module Load Complete -"
 	
 	CBE.Loader.PrintMessageNewLine "##"
+	
+	CBE.API.CleanUp
 }
 
 function CBE.Loader.LoadSystemModules()
@@ -52,25 +55,24 @@ function CBE.Loader.LoadSystemModules()
 	
 	cd "$CBE_CORE_SYSTEM_MODULES_PATH"
 	
-	for f in *.cbe; do 
-		if [ "$f" == "*.cbe" ]; then
-			CBE.Loader.PrintMessageNewLine "# ERROR: No system modules found!"
-			return 0
-		else
-			. "$f"
-		fi
-	done
+	. "api.cbe"
+	. "system.cbe"
+	. "help.cbe"
 	
 	CBE.Loader.PrintMessageNewLine " Ok!"
 }
 
 function CBE.Loader.LoadGlobalModules()
 {
+	
 	CBE.Loader.PrintMessageNewLine "# - Loading Global Modules : "
 		
 	cd "$CBE_CORE_GLOBAL_MODULES_PATH"
 	
 	for f in *.cbe; do 
+		
+		CBE.API.Init
+		
 		if [ "$f" == "*.cbe" ]; then
 			CBE.Loader.PrintMessageNewLine "#   - WARN: No global modules found."
 		else
@@ -90,6 +92,9 @@ function CBE.Loader.LoadUserModules()
 		cd "$CBE_CORE_USER_MODULES_PATH"
 	
 		for f in *.cbe; do 
+			
+			CBE.API.Init
+			
 			if [ "$f" == "*.cbe" ]; then
 				CBE.Loader.PrintMessageNewLine "#   - WARN: No user modules found."
 			else
@@ -105,6 +110,8 @@ function CBE.Loader.LoadUserModules()
 	fi
 
 }
+
+## END MODULE LOADING FUNCTIONS
 
 function CBE.Loader.LoadFlatFile()
 {
@@ -125,25 +132,25 @@ function CBE.Loader.LoadFlatFile()
 
 function CBE.Loader.PrintMessageNewLine()
 {
-	if [ "$CBE_CORE_BOOL_QUITEMODE" != "true" ]; then
+	if [ "$CBE_CORE_SETTING_BOOL_QUIETMODE" != "true" ]; then
 		echo "$1"
 	fi
 }
 
 function CBE.Loader.PrintMessage()
 {
-	if [ "$CBE_CORE_BOOL_QUITEMODE" != "true" ]; then
+	if [ "$CBE_CORE_SETTING_BOOL_QUIETMODE" != "true" ]; then
 		echo -n "$1"
 	fi
 }
 
 function CBE.Loader.SetOptions()
 {
-	CBE_CORE_BOOL_QUITEMODE="$1"
-	CBE_CORE_BOOL_FLATFILE="$2"
+	CBE_CORE_SETTING_BOOL_QUIETMODE="$1"
+	CBE_CORE_SETTING_BOOL_FLATFILE="$2"
 }
 
-#
+##
 # Clean up references to functions and vars the user should not have access to.
 ##
 function CBE.Loader.CleanUp()
@@ -159,8 +166,10 @@ function CBE.Loader.CleanUp()
 	unset -f CBE.Loader.LoadUserModules
 
 	unset CBE_CORE_TMP_LAST_DIR	
-	unset CBE_CORE_BOOL_QUITEMODE
-	unset CBE_CORE_BOOL_FLATFILE
+	unset CBE_CORE_SETTING_BOOL_QUIETMODE
+	unset CBE_CORE_SETTING_BOOL_FLATFILE
+	
+	unset -f CBE.Loader.CleanUp
 }
 
 ## FUNCTION CALLS
@@ -171,5 +180,3 @@ CBE.Loader.LoadModules
 CBE.Loader.CleanUp
 
 ## END FUNCTION CALLS
-
-unset -f CBE.Loader.CleanUp
