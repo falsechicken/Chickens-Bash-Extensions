@@ -17,6 +17,7 @@ function CBE.Loader.ShowIntro()
 {
 	CBE.Loader.PrintMessageNewLine "##"
 	CBE.Loader.PrintMessageNewLine "# == Chicken's Bash Extensions =="
+	CBE.Loader.PrintMessageNewLine "#	- Version $CBE_CORE_VERSION -"
 	CBE.Loader.PrintMessageNewLine "#"
 	CBE.Loader.PrintMessageNewLine "# - All extension commands are prefixed with '@'. -"
 	CBE.Loader.PrintMessageNewLine "#"
