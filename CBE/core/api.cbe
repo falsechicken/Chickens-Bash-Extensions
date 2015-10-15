@@ -1,5 +1,7 @@
 #!/bin/bash
 
+CBE_API_SUB_PATH="$CBE_CORE_SYSTEM_MODULES_PATH"/api
+
 CBE_API_FUNCTION_RESULT=""
 
 ## PRIVATE FUNCTIONS
@@ -7,21 +9,31 @@ CBE_API_FUNCTION_RESULT=""
 function CBE.API.Init()
 {
 	CBE_API_FUNCTION_RESULT=""
+	
+	CBE.API.InitSubs
+}
+
+function CBE.API.InitSubs()
+{
+	. "$CBE_API_SUB_PATH"/api.math.cbe
 }
 
 function CBE.API.CleanUp()
 {
 	unset -f CBE.API.Init
 	
+	unset -f CBE.API.InitSubs
+	
 	unset -f CBE.API.CleanUp
+	
+	unset CBE_API_SUB_PATH
 }
 
 ## END PRIVATE FUNCTIONS
 
-function CBE.API.GenerateUUID()
+function CBE.API.GetResult()
 {
-	CBE_API_FUNCTION_RESULT="$(od -vAn -N4 -tu4 < /dev/urandom)"
-	CBE_API_FUNCTION_RESULT="${CBE_API_FUNCTION_RESULT##*( )}"
+	echo "$CBE_API_FUNCTION_RESULT"
 }
 
 CBE.API.Init

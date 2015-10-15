@@ -1,0 +1,12 @@
+#!/bin/bash
+
+function CBE.API.Math.Evaluate()
+{
+	let "CBE_API_FUNCTION_RESULT = $1"
+}
+
+function CBE.API.Math.GenerateUUID()
+{
+	CBE_API_FUNCTION_RESULT="$(od -vAn -N4 -tu4 < /dev/urandom)"
+	CBE_API_FUNCTION_RESULT="${CBE_API_FUNCTION_RESULT##*( )}"
+}
