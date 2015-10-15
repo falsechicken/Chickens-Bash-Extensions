@@ -17,6 +17,8 @@ function System.CleanUp()
 {
 	unset -f System.InitSubs
 	
+	unset -f System.CleanUp
+	
 	unset CBE_MODULE_SYSTEM_HOME
 }
 
@@ -37,5 +39,3 @@ function @sys.reload()
 
 System.InitSubs
 System.CleanUp
-
-unset -f System.CleanUp

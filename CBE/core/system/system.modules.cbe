@@ -5,19 +5,6 @@ function @sys.modules.list()
 	echo "######################## "
 	echo "# - Loaded CBE Modules - "
 	echo "# ====================== "
-	echo "# - System :"
-	
-	
-	for f in "$CBE_CORE_SYSTEM_MODULES_PATH"/*.cbe; do 
-		if [ "$f" == "$CBE_CORE_SYSTEM_MODULES_PATH"/"*.cbe" ]; then
-			echo "# 	ERROR: No modules found!"
-		else
-			_sysTmpA=${f##*/}
-			_sysTmpA=${_sysTmpA%.*}
-			echo "# 	* $_sysTmpA"
-		fi
-	done
-	
 	echo "# - Global :"
 	
 	for f in "$CBE_CORE_GLOBAL_MODULES_PATH"/*.cbe; do 

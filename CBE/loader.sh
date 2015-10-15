@@ -46,7 +46,6 @@ function CBE.Loader.LoadModules()
 	
 	CBE.Loader.PrintMessageNewLine "##"
 	
-	CBE.API.CleanUp
 }
 
 function CBE.Loader.LoadSystemModules()
@@ -70,9 +69,6 @@ function CBE.Loader.LoadGlobalModules()
 	cd "$CBE_CORE_GLOBAL_MODULES_PATH"
 	
 	for f in *.cbe; do 
-		
-		CBE.API.Init
-		
 		if [ "$f" == "*.cbe" ]; then
 			CBE.Loader.PrintMessageNewLine "#   - WARN: No global modules found."
 		else
@@ -92,9 +88,6 @@ function CBE.Loader.LoadUserModules()
 		cd "$CBE_CORE_USER_MODULES_PATH"
 	
 		for f in *.cbe; do 
-			
-			CBE.API.Init
-			
 			if [ "$f" == "*.cbe" ]; then
 				CBE.Loader.PrintMessageNewLine "#   - WARN: No user modules found."
 			else
