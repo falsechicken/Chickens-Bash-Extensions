@@ -3,6 +3,8 @@
 CBE_MODULE_SYSTEM_HOME="$CBE_CORE_SYSTEM_MODULES_PATH"/system
 CBE_MODULE_SYSTEM_PREFIX="sys"
 
+## PRIVATE FUNCTIONS
+
 ##
 # Load sub commands for module.
 ##
@@ -17,6 +19,21 @@ function System.CleanUp()
 	
 	unset CBE_MODULE_SYSTEM_HOME
 }
+
+## END PRIVATE FUNCTIONS
+
+## PUBLIC COMMAND FUNCTIONS
+
+##
+# Reload/Resource bash which also happens to reload CBE
+## TODO: EXPERIMENTAL. DO NOT KNOW IF SAFE.
+function @sys.reload()
+{
+	clear
+	exec env - bash
+}
+
+## END PUBLIC COMMAND FUNCTIONS
 
 System.InitSubs
 System.CleanUp
