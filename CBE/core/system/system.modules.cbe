@@ -33,3 +33,9 @@ function @sys.modules.list()
 	
 	unset _sysTmpA
 }
+
+
+function @sys.modules.unload()
+{
+		eval ""${CBE_CORE_MODULE_UUID_TABLE[""$1".cbe"]}".unload"
+}

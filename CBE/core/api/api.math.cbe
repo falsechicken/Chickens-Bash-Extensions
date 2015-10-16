@@ -1,5 +1,9 @@
 #!/bin/bash
 
+##
+# Do Math.
+# Ex: CBE.API.Math.Evaluate "1 + 1"
+##
 function CBE.API.Math.Evaluate()
 {
 	let "CBE_API_FUNCTION_RESULT = $1"

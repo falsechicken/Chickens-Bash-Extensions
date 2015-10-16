@@ -16,6 +16,7 @@ function CBE.API.Init()
 function CBE.API.InitSubs()
 {
 	. "$CBE_API_SUB_PATH"/api.math.cbe
+	. "$CBE_API_SUB_PATH"/api.commands.cbe
 }
 
 function CBE.API.CleanUp()
@@ -30,11 +31,6 @@ function CBE.API.CleanUp()
 }
 
 ## END PRIVATE FUNCTIONS
-
-function CBE.API.GetResult()
-{
-	echo "$CBE_API_FUNCTION_RESULT"
-}
 
 CBE.API.Init
 CBE.API.CleanUp

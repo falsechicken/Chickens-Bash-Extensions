@@ -7,10 +7,14 @@ CBE_CORE_GLOBAL_MODULES_PATH="$CBE_CORE_INSTALL_PATH"/modules
 CBE_CORE_SYSTEM_MODULES_PATH="$CBE_CORE_INSTALL_PATH"/core
 CBE_CORE_USER_MODULES_PATH="$HOME"/.cbe_modules
 
+declare -A CBE_CORE_MODULE_UUID_TABLE
+
 CBE_CORE_SETTING_BOOL_QUIETMODE=""
 CBE_CORE_SETTING_BOOL_FLATFILE=""
 
 CBE_CORE_VERSION="v0.0.2"
+
+CBE_CORE_TMP=""
 
 function CBE.Loader.ShowIntro()
 {
@@ -92,7 +96,18 @@ function CBE.Loader.LoadUserModules()
 				CBE.Loader.PrintMessageNewLine "#   - WARN: No user modules found."
 			else
 				CBE.Loader.PrintMessage "#   - User Module: ${f%.*}"
+				
+				## Generate UUID and retrieve the result.
+				CBE.API.Math.GenerateUUID
+				CBE_CORE_TMP="$CBE_API_FUNCTION_RESULT"
+				
+				## Add entry to the module UUID table. Filename as the key and uuid as the value.
+				CBE_CORE_MODULE_UUID_TABLE=( ["$f"]="$CBE_CORE_TMP")
+				
 				. "$f"
+				
+				CBE_CORE_TMP=""
+				
 				CBE.Loader.PrintMessageNewLine " ... Ok!"
 			fi
 		done
@@ -159,6 +174,7 @@ function CBE.Loader.CleanUp()
 	unset -f CBE.Loader.LoadUserModules
 
 	unset CBE_CORE_TMP_LAST_DIR	
+	unset CBE_CORE_TMP
 	unset CBE_CORE_SETTING_BOOL_QUIETMODE
 	unset CBE_CORE_SETTING_BOOL_FLATFILE
 	
