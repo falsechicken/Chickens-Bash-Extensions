@@ -10,6 +10,7 @@ CBE_MODULE_SYSTEM_HOME="$CBE_CORE_SYSTEM_MODULES_PATH"/system
 function System.InitSubs()
 {
 	. "$CBE_MODULE_SYSTEM_HOME"/system.modules.cbe
+	. "$CBE_MODULE_SYSTEM_HOME"/system.unsafe.cbe
 }
 
 function System.CleanUp()
@@ -25,14 +26,6 @@ function System.CleanUp()
 
 ## PUBLIC COMMAND FUNCTIONS
 
-##
-# Reload/Resource bash which also happens to reload CBE
-## TODO: EXPERIMENTAL. DO NOT KNOW IF SAFE.
-function @sys.reload()
-{
-	clear
-	exec env - bash
-}
 
 ## END PUBLIC COMMAND FUNCTIONS
 

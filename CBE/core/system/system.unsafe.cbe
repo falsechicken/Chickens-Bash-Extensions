@@ -1,0 +1,10 @@
+#!/bin/bash
+
+##
+# Reload/Resource bash which also happens to reload CBE
+## TODO: EXPERIMENTAL. DO NOT KNOW IF SAFE. HOME IS NOT SET.
+function @sys.unsafe.reload()
+{
+	clear
+	exec env - bash
+}

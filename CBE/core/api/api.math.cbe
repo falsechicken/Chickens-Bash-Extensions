@@ -9,6 +9,15 @@ function CBE.API.Math.Evaluate()
 	let "CBE_API_FUNCTION_RESULT = $1"
 }
 
+##
+# Generate random number between a range of two numbers.
+# Ex: CBE.API.Math.Random 1 100
+##
+function CBE.API.Math.Random()
+{
+	CBE_API_FUNCTION_RESULT="$(shuf -i "$1"-"$2" -n 1)"
+}
+
 function CBE.API.Math.GenerateUUID()
 {
 	CBE_API_FUNCTION_RESULT="$(od -vAn -N4 -tu4 < /dev/urandom)"

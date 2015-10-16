@@ -12,9 +12,7 @@ declare -A CBE_CORE_MODULE_UUID_TABLE
 CBE_CORE_SETTING_BOOL_QUIETMODE=""
 CBE_CORE_SETTING_BOOL_FLATFILE=""
 
-CBE_CORE_VERSION="v0.0.2"
-
-CBE_CORE_TMP=""
+CBE_CORE_VERSION="v0.0.3"
 
 function CBE.Loader.ShowIntro()
 {
@@ -76,9 +74,20 @@ function CBE.Loader.LoadGlobalModules()
 		if [ "$f" == "*.cbe" ]; then
 			CBE.Loader.PrintMessageNewLine "#   - WARN: No global modules found."
 		else
-			CBE.Loader.PrintMessage "#   - Global Module: ${f%.*}"
+			CBE.Loader.PrintMessage "#   - Global Module: ${f%.*} ... "
+			
+			## Generate UUID.
+			CBE.API.Math.GenerateUUID
+				
+				## Add entry to the module UUID table. Filename as the key and the returned uuid as the value.
+			CBE_CORE_MODULE_UUID_TABLE=( ["$f"]="$CBE_API_FUNCTION_RESULT")
+				
+			cd "$CBE_CORE_GLOBAL_MODULES_PATH"
+			
 			. "$f"
-			CBE.Loader.PrintMessageNewLine " ... Ok!"
+				
+			"${CBE_CORE_MODULE_UUID_TABLE["$f"]}".Load
+			"${CBE_CORE_MODULE_UUID_TABLE["$f"]}".CleanUp
 		fi
 	done
 }
@@ -95,20 +104,21 @@ function CBE.Loader.LoadUserModules()
 			if [ "$f" == "*.cbe" ]; then
 				CBE.Loader.PrintMessageNewLine "#   - WARN: No user modules found."
 			else
-				CBE.Loader.PrintMessage "#   - User Module: ${f%.*}"
+				CBE.Loader.PrintMessage "#   - User Module: ${f%.*} ... "
 				
-				## Generate UUID and retrieve the result.
+				## Generate UUID.
 				CBE.API.Math.GenerateUUID
-				CBE_CORE_TMP="$CBE_API_FUNCTION_RESULT"
 				
-				## Add entry to the module UUID table. Filename as the key and uuid as the value.
-				CBE_CORE_MODULE_UUID_TABLE=( ["$f"]="$CBE_CORE_TMP")
+				## Add entry to the module UUID table. Filename as the key and the returned uuid as the value.
+				CBE_CORE_MODULE_UUID_TABLE=( ["$f"]="$CBE_API_FUNCTION_RESULT")
+				
+				cd "$CBE_CORE_USER_MODULES_PATH"
 				
 				. "$f"
 				
-				CBE_CORE_TMP=""
+				"${CBE_CORE_MODULE_UUID_TABLE["$f"]}".Load
+				"${CBE_CORE_MODULE_UUID_TABLE["$f"]}".CleanUp
 				
-				CBE.Loader.PrintMessageNewLine " ... Ok!"
 			fi
 		done
 	else
@@ -152,6 +162,15 @@ function CBE.Loader.PrintMessage()
 	fi
 }
 
+##
+# Modules call this upon loading to report the status of the load. Generally ends up being
+# "Ok!".
+##
+function CBE.Loader.PrintLoadedMessage()
+{
+	CBE.Loader.PrintMessageNewLine "$@"
+}
+
 function CBE.Loader.SetOptions()
 {
 	CBE_CORE_SETTING_BOOL_QUIETMODE="$1"
@@ -172,9 +191,9 @@ function CBE.Loader.CleanUp()
 	unset -f CBE.Loader.LoadSystemModules
 	unset -f CBE.Loader.LoadGlobalModules
 	unset -f CBE.Loader.LoadUserModules
+	unset -f CBE.Loader.PrintLoadedMessage
 
 	unset CBE_CORE_TMP_LAST_DIR	
-	unset CBE_CORE_TMP
 	unset CBE_CORE_SETTING_BOOL_QUIETMODE
 	unset CBE_CORE_SETTING_BOOL_FLATFILE
 	

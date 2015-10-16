@@ -17,6 +17,8 @@ function @sys.modules.list()
 		fi
 	done
 	
+	echo "#"
+	
 	echo "# - User : "
 	
 	for f in "$CBE_CORE_USER_MODULES_PATH"/*.cbe; do 
@@ -29,13 +31,80 @@ function @sys.modules.list()
 		fi
 	done
 	
+	echo "#"
+		
+	echo "# - Disabled : "
+	
+	for f in "$CBE_CORE_GLOBAL_MODULES_PATH"/DISABLED/*.cbe; do 
+		if [ "$f" == "$CBE_CORE_GLOBAL_MODULES_PATH"/DISABLED/"*.cbe" ]; then
+			echo "# 	No global modules disabled."
+		else
+			_sysTmpA=${f##*/}
+			_sysTmpA=${_sysTmpA%.*}
+			echo "# 	Global Mod: * $_sysTmpA"
+		fi
+	done
+	
+	echo "#"
+	
+	for f in "$CBE_CORE_USER_MODULES_PATH"/DISABLED/*.cbe; do 
+		if [ "$f" == "$CBE_CORE_USER_MODULES_PATH"/DISABLED/"*.cbe" ]; then
+			echo "# 	 No user modules disabled."
+		else
+			_sysTmpA=${f##*/}
+			_sysTmpA=${_sysTmpA%.*}
+			echo "# 	User Mod: * $_sysTmpA"
+		fi
+	done
+	
 	echo "######################## "
 	
 	unset _sysTmpA
 }
 
-
 function @sys.modules.unload()
 {
-		eval ""${CBE_CORE_MODULE_UUID_TABLE[""$1".cbe"]}".unload"
+		eval ""${CBE_CORE_MODULE_UUID_TABLE[""$1".cbe"]}".UnLoad"
+}
+
+function @sys.modules.disable()
+{
+	@sys.modules.unload "$1"
+	
+	if [ -e "$CBE_CORE_GLOBAL_MODULES_PATH"/"$1".cbe ]; then
+		mv "$CBE_CORE_GLOBAL_MODULES_PATH"/"$1".cbe "$CBE_CORE_GLOBAL_MODULES_PATH"/DISABLED/"$1".cbe
+	fi
+	
+	if [ -d "$CBE_CORE_GLOBAL_MODULES_PATH"/"$1" ]; then
+		mv "$CBE_CORE_GLOBAL_MODULES_PATH"/"$1" "$CBE_CORE_GLOBAL_MODULES_PATH"/DISABLED/"$1"
+	fi
+	
+	if [ -e "$CBE_CORE_USER_MODULES_PATH"/"$1".cbe ]; then
+		mv "$CBE_CORE_USER_MODULES_PATH"/"$1".cbe "$CBE_CORE_USER_MODULES_PATH"/DISABLED/"$1".cbe
+	fi
+	
+	if [ -d "$CBE_CORE_USER_MODULES_PATH"/"$1" ]; then
+		mv "$CBE_CORE_USER_MODULES_PATH"/"$1" "$CBE_CORE_USER_MODULES_PATH"/DISABLED/"$1"
+	fi
+}
+
+function @sys.modules.enable()
+{
+	#@sys.modules.unload "$1"
+	
+	if [ -e "$CBE_CORE_GLOBAL_MODULES_PATH"/DISABLED/"$1".cbe ]; then
+		mv "$CBE_CORE_GLOBAL_MODULES_PATH"/DISABLED/"$1".cbe "$CBE_CORE_GLOBAL_MODULES_PATH"/"$1".cbe
+	fi
+	
+	if [ -d "$CBE_CORE_GLOBAL_MODULES_PATH"/DISABLED/"$1" ]; then
+		mv "$CBE_CORE_GLOBAL_MODULES_PATH"/DISABLED/"$1" "$CBE_CORE_GLOBAL_MODULES_PATH"/"$1"
+	fi
+	
+	if [ -e "$CBE_CORE_USER_MODULES_PATH"/DISABLED/"$1".cbe ]; then
+		mv "$CBE_CORE_USER_MODULES_PATH"/DISABLED/"$1".cbe "$CBE_CORE_USER_MODULES_PATH"/"$1".cbe
+	fi
+	
+	if [ -d "$CBE_CORE_USER_MODULES_PATH"/DISABLED/"$1" ]; then
+		mv "$CBE_CORE_USER_MODULES_PATH"/DISABLED/"$1" "$CBE_CORE_USER_MODULES_PATH"/"$1"
+	fi
 }

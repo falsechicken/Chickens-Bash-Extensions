@@ -1,0 +1,6 @@
+#!/bin/bash
+
+function CBE.API.Module.GetUUID()
+{
+	CBE_API_FUNCTION_RESULT="${CBE_CORE_MODULE_UUID_TABLE[""$1".cbe"]}"
+}

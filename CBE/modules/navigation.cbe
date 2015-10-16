@@ -133,3 +133,31 @@ function @nav.flip()
 		return 0
 	fi
 }
+
+eval "function "${CBE_CORE_MODULE_UUID_TABLE["navigation.cbe"]}".Load()
+{
+	CBE.Loader.PrintLoadedMessage "Ok!"
+}"
+
+eval "function "${CBE_CORE_MODULE_UUID_TABLE["navigation.cbe"]}".UnLoad()
+{
+	unset CBE_NAV_CMD
+	unset CBE_NAV_OLDPATH
+	unset CBE_NAV_BIT_SIDE_1
+	unset CBE_NAV_BIT_SIDE_2
+    unset CBE_NAV_BIT_CURRENT_SIDE
+    
+    unset -f @nav.up
+    unset -f @nav.back
+    unset -f @nav.bit
+    unset -f @nav.bitcp
+	unset -f @nav.bitmv
+	unset -f @nav.flip
+	
+	echo "Unloaded."
+}"
+
+eval "function "${CBE_CORE_MODULE_UUID_TABLE["navigation.cbe"]}".CleanUp()
+{
+	cd .
+}"
