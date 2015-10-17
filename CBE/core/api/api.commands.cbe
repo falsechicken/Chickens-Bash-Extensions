@@ -1,6 +1,0 @@
-#!/bin/bash
-
-function CBE.API.Commands.ShowResult()
-{
-	echo "$CBE_API_FUNCTION_RESULT"
-}

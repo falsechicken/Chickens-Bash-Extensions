@@ -82,7 +82,7 @@ function CBE.Loader.LoadGlobalModules()
 			
 			if [ -d "$CBE_CORE_GLOBAL_MODULES_PATH"/${f%.*} ]; then
 					
-				CBE.Loader.PrintMessageNewLine "#       - Loading Sub-Modules For  ... "
+				CBE.Loader.PrintMessageNewLine "#       - Loading Sub-Modules For ${f%.*} ... "
 					
 				cd "$CBE_CORE_GLOBAL_MODULES_PATH"/${f%.*}
 					
@@ -147,7 +147,7 @@ function CBE.Loader.LoadUserModules()
 function CBE.Loader.LoadModule()
 {
 	## Generate UUID.
-	CBE.API.Math.GenerateUUID
+	"$CBE_UUID".CBE.API.Math.GenerateUUID
 		
 	## Add entry to the module UUID table. Filename as the key and the returned uuid as the value.
 	CBE_CORE_MODULE_UUID_TABLE=( ["$2"]="$CBE_API_FUNCTION_RESULT")
@@ -288,6 +288,7 @@ function CBE.Loader.CleanUp()
 	unset -f CBE.Loader.LoadUserModules
 	unset -f CBE.Loader.LoadModule
 	unset -f CBE.Loader.LoadSubModule
+	unset -f CBE.Loader.LoadSystemModule
 	unset -f CBE.Loader.PrintLoadedMessage
 	unset -f CBE.Loader.SetUUID
 
