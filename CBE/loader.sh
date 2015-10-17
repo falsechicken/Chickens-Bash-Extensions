@@ -300,6 +300,7 @@ function CBE.Loader.CleanUp()
 }
 
 ## FUNCTION CALLS
+[[ $- == *i* ]] || return ##If we are not running interactive return.
 
 CBE.Loader.SetOptions "$1" "$2"
 CBE.Loader.SetUUID
