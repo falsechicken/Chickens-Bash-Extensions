@@ -6,6 +6,7 @@ CBE_CORE_INSTALL_PATH="/path/to/CBE"
 CBE_CORE_GLOBAL_MODULES_PATH="$CBE_CORE_INSTALL_PATH"/modules
 CBE_CORE_SYSTEM_MODULES_PATH="$CBE_CORE_INSTALL_PATH"/core
 CBE_CORE_USER_MODULES_PATH="$HOME"/.cbe_modules
+CBE_CORE_TMP_PATH="/tmp"
 
 declare -A CBE_CORE_MODULE_UUID_TABLE
 
@@ -78,18 +79,7 @@ function CBE.Loader.LoadGlobalModules()
 		else
 			CBE.Loader.PrintMessage "#   - Global Module: ${f%.*} ... "
 			
-			## Generate UUID.
-			CBE.API.Math.GenerateUUID
-				
-				## Add entry to the module UUID table. Filename as the key and the returned uuid as the value.
-			CBE_CORE_MODULE_UUID_TABLE=( ["$f"]="$CBE_API_FUNCTION_RESULT")
-				
-			cd "$CBE_CORE_GLOBAL_MODULES_PATH"
-			
-			. "$f"
-				
-			"${CBE_CORE_MODULE_UUID_TABLE["$f"]}".Load
-			"${CBE_CORE_MODULE_UUID_TABLE["$f"]}".CleanUp
+			CBE.Loader.LoadModule "$CBE_CORE_GLOBAL_MODULES_PATH" "$f"
 		fi
 	done
 }
@@ -108,19 +98,7 @@ function CBE.Loader.LoadUserModules()
 			else
 				CBE.Loader.PrintMessage "#   - User Module: ${f%.*} ... "
 				
-				## Generate UUID.
-				CBE.API.Math.GenerateUUID
-				
-				## Add entry to the module UUID table. Filename as the key and the returned uuid as the value.
-				CBE_CORE_MODULE_UUID_TABLE=( ["$f"]="$CBE_API_FUNCTION_RESULT")
-				
-				cd "$CBE_CORE_USER_MODULES_PATH"
-				
-				. "$f"
-				
-				"${CBE_CORE_MODULE_UUID_TABLE["$f"]}".Load
-				"${CBE_CORE_MODULE_UUID_TABLE["$f"]}".CleanUp
-				
+				CBE.Loader.LoadModule "$CBE_CORE_USER_MODULES_PATH" "$f"
 			fi
 		done
 	else
@@ -129,6 +107,33 @@ function CBE.Loader.LoadUserModules()
 	
 	fi
 
+}
+
+##
+# Load a module. 
+# Ex. CBE.Loader.LoadModule "FOLDER_PATH" "MODULE_NAME.cbe"
+##
+function CBE.Loader.LoadModule()
+{
+	## Generate UUID.
+	CBE.API.Math.GenerateUUID
+		
+	## Add entry to the module UUID table. Filename as the key and the returned uuid as the value.
+	CBE_CORE_MODULE_UUID_TABLE=( ["$2"]="$CBE_API_FUNCTION_RESULT")
+	
+	local LOCAL_MODULE_UUID="${CBE_CORE_MODULE_UUID_TABLE["$2"]}"
+		
+	cd "$1"
+		
+	sed "s/*CBE_UUID/$CBE_UUID/g" "$2" > "$CBE_CORE_TMP_PATH"/"$2".tmp
+	sed "s/*MODULE_UUID/$LOCAL_MODULE_UUID/g" "$CBE_CORE_TMP_PATH"/"$2".tmp > "$CBE_CORE_TMP_PATH"/"$2".tmp.2
+	
+	. "$CBE_CORE_TMP_PATH"/"$2".tmp.2
+	
+	rm "$CBE_CORE_TMP_PATH"/"$2".*
+		
+	"$LOCAL_MODULE_UUID".Load
+	"$LOCAL_MODULE_UUID".CleanUp
 }
 
 ## END MODULE LOADING FUNCTIONS
