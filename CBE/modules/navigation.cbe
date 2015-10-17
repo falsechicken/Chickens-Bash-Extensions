@@ -134,12 +134,12 @@ function @nav.flip()
 	fi
 }
 
-eval "function "${CBE_CORE_MODULE_UUID_TABLE["navigation.cbe"]}".Load()
+function *MODULE_UUID.Load()
 {
 	CBE.Loader.PrintLoadedMessage "Ok!"
-}"
+}
 
-eval "function "${CBE_CORE_MODULE_UUID_TABLE["navigation.cbe"]}".UnLoad()
+function *MODULE_UUID.UnLoad()
 {
 	unset CBE_NAV_CMD
 	unset CBE_NAV_OLDPATH
@@ -155,9 +155,9 @@ eval "function "${CBE_CORE_MODULE_UUID_TABLE["navigation.cbe"]}".UnLoad()
 	unset -f @nav.flip
 	
 	echo "Unloaded."
-}"
+}
 
-eval "function "${CBE_CORE_MODULE_UUID_TABLE["navigation.cbe"]}".CleanUp()
+function *MODULE_UUID.CleanUp()
 {
 	cd .
-}"
+}

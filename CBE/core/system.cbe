@@ -1,33 +1,8 @@
 #!/bin/bash
 
-CBE_MODULE_SYSTEM_HOME="$CBE_CORE_SYSTEM_MODULES_PATH"/system
-
-## PRIVATE FUNCTIONS
-
-##
-# Load sub commands for module.
-##
-function System.InitSubs()
+function @sys.info()
 {
-	. "$CBE_MODULE_SYSTEM_HOME"/system.modules.cbe
-	. "$CBE_MODULE_SYSTEM_HOME"/system.unsafe.cbe
+
+	echo ""
+
 }
-
-function System.CleanUp()
-{
-	unset -f System.InitSubs
-	
-	unset -f System.CleanUp
-	
-	unset CBE_MODULE_SYSTEM_HOME
-}
-
-## END PRIVATE FUNCTIONS
-
-## PUBLIC COMMAND FUNCTIONS
-
-
-## END PUBLIC COMMAND FUNCTIONS
-
-System.InitSubs
-System.CleanUp
