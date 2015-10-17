@@ -1,35 +1,3 @@
 #!/bin/bash
 
-CBE_API_SUB_PATH="$CBE_CORE_SYSTEM_MODULES_PATH"/api
-
 CBE_API_FUNCTION_RESULT=""
-
-## PRIVATE FUNCTIONS
-
-function CBE.API.Init()
-{
-	CBE.API.InitSubs
-}
-
-function CBE.API.InitSubs()
-{
-	. "$CBE_API_SUB_PATH"/api.commands.cbe
-	. "$CBE_API_SUB_PATH"/api.math.cbe
-	. "$CBE_API_SUB_PATH"/api.module.cbe
-}
-
-function CBE.API.CleanUp()
-{
-	unset -f CBE.API.Init
-	
-	unset -f CBE.API.InitSubs
-	
-	unset -f CBE.API.CleanUp
-	
-	unset CBE_API_SUB_PATH
-}
-
-## END PRIVATE FUNCTIONS
-
-CBE.API.Init
-CBE.API.CleanUp

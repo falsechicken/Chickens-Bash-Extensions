@@ -57,18 +57,17 @@ function CBE.Loader.LoadSystemModules()
 {
 	CBE.Loader.PrintMessage "# - Loading System Modules ... "
 	
-	cd "$CBE_CORE_SYSTEM_MODULES_PATH"
+	CBE.Loader.LoadSystemModule "api.cbe"
 	
-	. "api.cbe"
-	. "system.cbe"
-	. "help.cbe"
+	CBE.Loader.LoadSystemModule "system.cbe"
+	
+	CBE.Loader.LoadSystemModule "help.cbe"
 	
 	CBE.Loader.PrintMessageNewLine " Ok!"
 }
 
 function CBE.Loader.LoadGlobalModules()
 {
-	
 	CBE.Loader.PrintMessageNewLine "# - Loading Global Modules : "
 		
 	cd "$CBE_CORE_GLOBAL_MODULES_PATH"
@@ -80,6 +79,22 @@ function CBE.Loader.LoadGlobalModules()
 			CBE.Loader.PrintMessage "#   - Global Module: ${f%.*} ... "
 			
 			CBE.Loader.LoadModule "$CBE_CORE_GLOBAL_MODULES_PATH" "$f"
+			
+			if [ -d "$CBE_CORE_GLOBAL_MODULES_PATH"/${f%.*} ]; then
+					
+				CBE.Loader.PrintMessageNewLine "#       - Loading Sub-Modules For  ... "
+					
+				cd "$CBE_CORE_GLOBAL_MODULES_PATH"/${f%.*}
+					
+				for sf in *.cbe; do 
+					if [ "$sf" == "*.cbe" ]; then
+						CBE.Loader.PrintMessageNewLine "#           - WARN: No sub-modules found."
+					else
+						CBE.Loader.LoadSubModule ""$CBE_CORE_GLOBAL_MODULES_PATH"/${f%.*}" "$f" "$sf"
+						CBE.Loader.PrintMessageNewLine "#           - ${sf%.*} ... Ok!"
+					fi
+				done		
+			fi
 		fi
 	done
 }
@@ -99,6 +114,22 @@ function CBE.Loader.LoadUserModules()
 				CBE.Loader.PrintMessage "#   - User Module: ${f%.*} ... "
 				
 				CBE.Loader.LoadModule "$CBE_CORE_USER_MODULES_PATH" "$f"
+				
+				if [ -d "$CBE_CORE_USER_MODULES_PATH"/${f%.*} ]; then
+					
+					CBE.Loader.PrintMessageNewLine "#       - Loading Sub-Modules For ${f%.*} ... "
+					
+					cd "$CBE_CORE_USER_MODULES_PATH"/${f%.*}
+					
+					for sf in *.cbe; do 
+						if [ "$sf" == "*.cbe" ]; then
+							CBE.Loader.PrintMessageNewLine "#           - WARN: No sub-modules found."
+						else
+							CBE.Loader.LoadSubModule ""$CBE_CORE_USER_MODULES_PATH"/${f%.*}" "$f" "$sf"
+							CBE.Loader.PrintMessageNewLine "#           - ${sf%.*} ... Ok!"
+						fi
+					done
+				fi
 			fi
 		done
 	else
@@ -134,6 +165,57 @@ function CBE.Loader.LoadModule()
 		
 	"$LOCAL_MODULE_UUID".Load
 	"$LOCAL_MODULE_UUID".CleanUp
+}
+
+##
+# Load a sub module. 
+# Ex. CBE.Loader.LoadSubModule "FOLDER_PATH" "PARENT_MODULE_NAME.cbe" "SUB_MODULE_NAME.cbe"
+##
+function CBE.Loader.LoadSubModule()
+{
+	local LOCAL_MODULE_UUID="${CBE_CORE_MODULE_UUID_TABLE["$2"]}"
+	
+	cd "$1"
+	
+	sed "s/*CBE_UUID/$CBE_UUID/g" "$3" > "$CBE_CORE_TMP_PATH"/"$3".tmp
+	sed "s/*MODULE_UUID/$LOCAL_MODULE_UUID/g" "$CBE_CORE_TMP_PATH"/"$3".tmp > "$CBE_CORE_TMP_PATH"/"$3".tmp.2
+	
+	. "$CBE_CORE_TMP_PATH"/"$3".tmp.2
+	
+	rm "$CBE_CORE_TMP_PATH"/"$3".*
+	
+}
+
+##
+# Load a system module.
+# Ex. CBE.Loader.LoadSystemModule "SYS_MODULE_FILENAME"
+##
+function CBE.Loader.LoadSystemModule()
+{
+	cd "$CBE_CORE_SYSTEM_MODULES_PATH"
+	
+	sed "s/*CBE_UUID/$CBE_UUID/g" "$1" > "$CBE_CORE_TMP_PATH"/"$1".tmp
+	
+	. "$CBE_CORE_TMP_PATH"/"$1".tmp
+	
+	rm "$CBE_CORE_TMP_PATH"/"$1".*
+	
+	if [ -d "$CBE_CORE_SYSTEM_MODULES_PATH"/${1%.*} ]; then ## Check for system sub-modules.
+		
+		cd "$CBE_CORE_SYSTEM_MODULES_PATH"/${1%.*}
+		
+		for sf in *.cbe; do 
+			if [ "$sf" == "*.cbe" ]; then
+				CBE.Loader.PrintMessage "System sub-module folder found but no modules!"
+			else
+				sed "s/*CBE_UUID/$CBE_UUID/g" "$sf" > "$CBE_CORE_TMP_PATH"/"$sf".tmp
+	
+				. "$CBE_CORE_TMP_PATH"/"$sf".tmp
+	
+				rm "$CBE_CORE_TMP_PATH"/"$sf".*
+			fi
+		done
+	fi
 }
 
 ## END MODULE LOADING FUNCTIONS
@@ -204,6 +286,8 @@ function CBE.Loader.CleanUp()
 	unset -f CBE.Loader.LoadSystemModules
 	unset -f CBE.Loader.LoadGlobalModules
 	unset -f CBE.Loader.LoadUserModules
+	unset -f CBE.Loader.LoadModule
+	unset -f CBE.Loader.LoadSubModule
 	unset -f CBE.Loader.PrintLoadedMessage
 	unset -f CBE.Loader.SetUUID
 
