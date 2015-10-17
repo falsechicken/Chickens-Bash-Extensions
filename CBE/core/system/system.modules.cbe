@@ -41,7 +41,7 @@ function @sys.modules.list()
 		else
 			_sysTmpA=${f##*/}
 			_sysTmpA=${_sysTmpA%.*}
-			echo "# 	Global Mod: * $_sysTmpA"
+			echo "# 	Global Mod: $_sysTmpA"
 		fi
 	done
 	
@@ -49,11 +49,11 @@ function @sys.modules.list()
 	
 	for f in "$CBE_CORE_USER_MODULES_PATH"/DISABLED/*.cbe; do 
 		if [ "$f" == "$CBE_CORE_USER_MODULES_PATH"/DISABLED/"*.cbe" ]; then
-			echo "# 	 No user modules disabled."
+			echo "# 	No user modules disabled."
 		else
 			_sysTmpA=${f##*/}
 			_sysTmpA=${_sysTmpA%.*}
-			echo "# 	User Mod: * $_sysTmpA"
+			echo "# 	User Mod: $_sysTmpA"
 		fi
 	done
 	

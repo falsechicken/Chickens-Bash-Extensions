@@ -9,6 +9,8 @@ CBE_CORE_USER_MODULES_PATH="$HOME"/.cbe_modules
 
 declare -A CBE_CORE_MODULE_UUID_TABLE
 
+CBE_UUID=""
+
 CBE_CORE_SETTING_BOOL_QUIETMODE=""
 CBE_CORE_SETTING_BOOL_FLATFILE=""
 
@@ -168,13 +170,19 @@ function CBE.Loader.PrintMessage()
 ##
 function CBE.Loader.PrintLoadedMessage()
 {
-	CBE.Loader.PrintMessageNewLine "$@"
+	CBE.Loader.PrintMessageNewLine "$1"
 }
 
 function CBE.Loader.SetOptions()
 {
 	CBE_CORE_SETTING_BOOL_QUIETMODE="$1"
 	CBE_CORE_SETTING_BOOL_FLATFILE="$2"
+}
+
+function CBE.Loader.SetUUID()
+{
+	CBE_UUID="$(od -vAn -N4 -tu4 < /dev/urandom)"
+	CBE_UUID="${CBE_UUID##*( )}"
 }
 
 ##
@@ -192,6 +200,7 @@ function CBE.Loader.CleanUp()
 	unset -f CBE.Loader.LoadGlobalModules
 	unset -f CBE.Loader.LoadUserModules
 	unset -f CBE.Loader.PrintLoadedMessage
+	unset -f CBE.Loader.SetUUID
 
 	unset CBE_CORE_TMP_LAST_DIR	
 	unset CBE_CORE_SETTING_BOOL_QUIETMODE
@@ -203,6 +212,7 @@ function CBE.Loader.CleanUp()
 ## FUNCTION CALLS
 
 CBE.Loader.SetOptions "$1" "$2"
+CBE.Loader.SetUUID
 CBE.Loader.ShowIntro
 CBE.Loader.LoadModules
 CBE.Loader.CleanUp
